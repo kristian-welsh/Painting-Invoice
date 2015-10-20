@@ -1,0 +1,4 @@
+Storyboard Prototype
+
+Screen 1 -> Screen 2 - if Y typed -> Screen 1
+                     - if N typed -> Program Terminates

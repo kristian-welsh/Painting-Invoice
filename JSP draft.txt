@@ -1,0 +1,14 @@
+                                                    name.c
+                                                      |
+                                               runRepeatedly()*
+                                                      |
+                              @-----------------------@------------------------@
+                              |                       |                        |
+                        getUserInput()       performCalculation()     askIfShouldContinue()
+
+name.c
+runRepeatedly()*
+getUserInput(), performCalculation(), displayOutput(), askIfRunAgain())
+(askForDimentions(), askForPaintType(), askForUndercoatRequirement(), askForLabourTime()), (calculateTotalArea(), calculateMaterialsCost(), calculateLabourCost(), calculateTotalCost()), clearScreen()?, displayName(), displayMaterialCost(), displayLabourCost(), displayVAT(), displayTotal()), (ask if run agaain stuff)
+((askForheight(), askForWidth(), askForLength()), (paintTypestuff), (undercoatt stuff), (labour stuff))
+(((height stuff), (width stuff), (length stuff))

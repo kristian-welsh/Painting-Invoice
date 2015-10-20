@@ -1,0 +1,45 @@
+Screen Layouts
+
+Screen 1:
+
+C:\Path\To\File>program.exe
+Please enter room height in meters: 4
+Please enter room width in meters: 10
+Please enter room length in meters: 500
+
+This program only works for walls between 5 and 25 meters.
+Please enter room length in meters: 8
+
+Enter L for luxury paint at £1.95 per square meter
+Enter S for standard paint at £1.20 per square meter
+Enter E for economy paint at £0.65 per square meter
+Paint type: X
+
+You have entered invalid data, please enter either L S or E.
+Paint type: S
+
+Undercoat paint costs £0.50 per square meter.
+If the room requires an undercoat enter Y otherwise enter N.
+Undercoat required: X
+
+You have entered invalid data, please enter either Y or N.
+Undercoat required: N
+
+Labour time required in hours: 4
+
+
+Screen 2:
+
+Name: John Doe
+
+Materials cost: £ xx.xx
+Labour cost:    £ xx.xx
+%20 VAT:        £ xx.xx
+
+Total:          £xxx.xx
+
+Would you like to perform another calculation? Enter Y for yes or N for no.
+Again?: X
+
+You have entered invalid data, please enter either Y or N.
+Again?: N

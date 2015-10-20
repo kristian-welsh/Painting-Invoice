@@ -1,0 +1,6 @@
+Notes
+
+Look up or ask richard about getting the customer's name (char arrays?)
+Clear the screen between input and invoice
+do i have to have all methods in JSP
+  multiple pages?
