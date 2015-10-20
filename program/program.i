@@ -224,7 +224,7 @@ int __attribute__((__cdecl__)) __attribute__ ((__nothrow__)) vswscanf (const wch
 # 9 "c:\\users\\kristian welsh\\dropbox\\university\\year 0\\foundation programming\\coursework\\assignment 1\\program\\program.c" 2
 
 void askName(char *namePtr);
-int askWidth(void);
+int askWidth();
 int askHeight(void);
 int askLength(void);
 char askPaintType(void);
@@ -236,21 +236,31 @@ void calculateInvoice(int width, int height, int length, char paintType, int und
 int main(void)
 {
  char name[32];
+ int width, height, length;
+
  askName(name);
- printf("hello %s!", name);
+ width = askWidth();
+ printf("Client Name: o %s\n", name);
+ printf("Room Width: %d\n", width);
  return 0;
 }
 
+
+
+
+
 void askName(char *namePtr)
 {
- char name[32];
- printf("Please enter your name: ");
+ printf("Please enter client name: ");
  gets(namePtr);
 }
 
 int askWidth(void)
 {
-
+ int width;
+ printf("Please enter room width: ");
+ scanf("%d", &width);
+ return width;
 }
 
 int askHeight(void)

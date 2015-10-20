@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 void askName(char *namePtr);
-int askWidth(void);
+int askWidth();
 int askHeight(void);
 int askLength(void);
 char askPaintType(void);
@@ -20,22 +20,31 @@ void calculateInvoice(int width, int height, int length, char paintType, int und
 int main(void)
 {
 	char name[32];
+	int width, height, length;
+	
 	askName(name);
-	printf("hello %s!", name);
+	width = askWidth();
+	printf("Client Name: o %s\n", name);
+	printf("Room Width: %d\n", width);
 	return 0;
 }
 
-
+/*
+	Asks the user for the client's name
+	Accepts a pointer to a char array as an argument.
+*/
 void askName(char *namePtr)
 {
-	char name[32];
-	printf("Please enter your name: ");
+	printf("Please enter client name: ");
 	gets(namePtr);
 }
 
 int askWidth(void)
 {
-	
+	int width;
+	printf("Please enter room width: ");
+	scanf("%d", &width);
+	return width;
 }
 
 int askHeight(void)

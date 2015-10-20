@@ -2,5 +2,10 @@ Notes
 
 Look up or ask richard about getting the customer's name (char arrays?)
 Clear the screen between input and invoice
-do i have to have all methods in JSP
-  multiple pages?
+
+Ask Richard
+
+Are the JSP boxes representing functions or significant sections?
+if they represent functions am i required to have a box for each function?
+What form should the storyboard come in? image? text? screen1 -> screen2 ?
+Do i hand richard the version with the CLS appendix or without?
