@@ -44,6 +44,7 @@ void displayUndercoatCost(int);
 void displayLabourCost(int);
 void displayLabourHours(int);
 void displayLabourRate(void);
+void displayMinimumLabourCost(void);
 
 void displayErrorMessage(void);
 
@@ -259,6 +260,7 @@ void displayInvoice(char *name, int materialsCost, int area, char paintType, int
 
   displayLabourHours(labourHours);
   displayLabourRate();
+  displayMinimumLabourCost();
   displayTableEdge();
 }
 
@@ -331,4 +333,9 @@ void displayLabourHours(int labourHours)
 void displayLabourRate(void)
 {
   printf("| Labour Rate: %26c %5d |\n", 156, LABOUR_RATE);
+}
+
+void displayMinimumLabourCost(void)
+{
+  printf("| Minimum Labour Cost: %18c %5d |\n", 156, LABOUR_MIN);
 }
