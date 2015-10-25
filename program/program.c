@@ -21,12 +21,15 @@
  * yes, i do enjoy typing :)
  */
 void askName(char *namePtr);
-int askWidth(void);
 int askHeight(void);
+int askWidth(void);
 int askLength(void);
 char askPaintType(void);
 int askUndercoatNeeded(void);
 int askLabour(void);
+void tellUserTheirWallsAreTooBigIfTheyAre(int);
+void tellUserTheirWallsAreTooHighIfTheyAre(int);
+int inputWhithinBounds(int, int, int);
 
 void calculateInvoice(int, int, int, char, int, int,
   int *, int *, int *, int *, int *, int *, double *, double *);
@@ -70,7 +73,7 @@ void displayErrorMessage(void);
 int main(void) {
   /* Input variables */
   char name[32], paintType, undercoatNeeded;
-  int width, height, length, labourHours;
+  int height, width, length, labourHours;
   
   /* Calculation variables */
   int area, materialsCost, paintCost, undercoatCost, labourCost, preVATTotal;
@@ -80,8 +83,8 @@ int main(void) {
   char programHalter;
 
   askName(name);
-  width = askWidth();
   height = askHeight();
+  width = askWidth();
   length = askLength();
   paintType = askPaintType();
   undercoatNeeded = askUndercoatNeeded();
@@ -110,21 +113,9 @@ int main(void) {
  */
 void askName(char *namePtr)
 {
-  printf("Please enter client name: ");
+  printf("Please enter client name (max 32 digits): ");
   gets(namePtr);
   fflush(stdin);
-}
-
-/* Asks the user for the width of the room to paint.
- * Returns the entered integer.
- */
-int askWidth(void)
-{
-  int width;
-  printf("Please enter room width: ");
-  scanf("%d", &width);
-  fflush(stdin);
-  return width;
 }
 
 /* Asks the user for the height of the room to paint.
@@ -133,10 +124,28 @@ int askWidth(void)
 int askHeight(void)
 {
   int height;
-  printf("Please enter room height: ");
-  scanf("%d", &height);
-  fflush(stdin);
+  do {
+    printf("Please enter room height: ");
+    scanf("%d", &height);
+    fflush(stdin);
+    tellUserTheirWallsAreTooHighIfTheyAre(height);
+  } while(!inputWhithinBounds(height, 2, 6));
   return height;
+}
+
+/* Asks the user for the width of the room to paint.
+ * Returns the entered integer.
+ */
+int askWidth(void)
+{
+  int width;
+  do {
+    printf("Please enter room width in meters: ");
+    scanf("%d", &width);
+    fflush(stdin);
+    tellUserTheirWallsAreTooBigIfTheyAre(width);
+  } while(!inputWhithinBounds(width, 5, 25));
+  return width;
 }
 
 /* Asks the user for the length of the room to paint.
@@ -185,6 +194,33 @@ int askLabour(void)
   scanf("%d", &labourHours);
   fflush(stdin);
   return labourHours;
+}
+
+/* Tells the user if their walls are too tall or short. */
+void tellUserTheirWallsAreTooHighIfTheyAre(int height)
+{
+  if(!inputWhithinBounds(height, 2, 6))
+  {
+    puts("This program only works for rooms between 2 and 6 meters tall.");
+  }
+}
+
+/* If the wall size is too large, inform the user */
+void tellUserTheirWallsAreTooBigIfTheyAre(int wallSize)
+{
+  if(!inputWhithinBounds(wallSize, 5, 25))
+  {
+    puts("This program only works for walls between 5 and 25 meters.");
+  }
+}
+
+/* returns 1 if the unput is between the upper and lower bounds
+ * otherwise returns 0.
+ */
+int inputWhithinBounds(int input, int min, int max)
+{
+  int result = ((min <= input) && (input <= max));
+  return result;
 }
 
 /* Calculates all invoice information using the user's inputs
@@ -320,11 +356,7 @@ void displayInvoice(char *name, int materialsCost, int area,
   int preVATTotal, double VATCost, double grandTotal)
 {
   displayTableEdge();
-
   displayClientName(name);
-
-  displayTableLine();
-  displayMaterialsCost(materialsCost);
   displayTableLine();
 
   displayArea(area);
@@ -334,7 +366,7 @@ void displayInvoice(char *name, int materialsCost, int area,
   displayUndercoatCost(undercoatCost);
 
   displayTableLine();
-  displayLabourCost(labourCost);
+  displayMaterialsCost(materialsCost);
   displayTableLine();
 
   displayLabourHours(labourHours);
@@ -342,12 +374,14 @@ void displayInvoice(char *name, int materialsCost, int area,
   displayMinimumLabourCost();
 
   displayTableLine();
-  displayPreVATTotal(preVATTotal);
-  displayVATCost(VATCost);
+  displayLabourCost(labourCost);
   displayTableLine();
 
-  displayGrandTotal(grandTotal);
+  displayPreVATTotal(preVATTotal);
+  displayVATCost(VATCost);
 
+  displayTableLine();
+  displayGrandTotal(grandTotal);
   displayTableEdge();
 }
 
@@ -367,18 +401,6 @@ void displayTableLine(void)
 void displayClientName(char *namePtr)
 {
   printf("| Client Name: %32s |\n", namePtr);
-}
-
-/* Display the materials cost */
-void displayMaterialsCost(double materialsCost)
-{
-  /* i insert the £ with a code for two reasons:
-   * 1: using the £ in a string gives you a "á"
-   *    character in the printout
-   * 2: i want to be able to set a certain spacing
-   *    ammount for it without having a bunch of spaces in the code.
-   */
-  printf("| Materials Cost: %22c %6.2lf |\n", 156, materialsCost);
 }
 
 /* Displays the area to be painted */
@@ -420,10 +442,16 @@ void displayUndercoatCost(double undercoatCost)
   printf("| Cost of Undercoat: %19c %6.2lf |\n", 156, undercoatCost / 100);
 }
 
-/* Displays the cost of the labour used */
-void displayLabourCost(double labourCost)
+/* Display the materials cost */
+void displayMaterialsCost(double materialsCost)
 {
-  printf("| Labour Cost: %25c %6.2lf |\n", 156, labourCost / 100);
+  /* i insert the £ with a code for two reasons:
+   * 1: using the £ in a string gives you a "á"
+   *    character in the printout
+   * 2: i want to be able to set a certain spacing
+   *    ammount for it without having a bunch of spaces in the code.
+   */
+  printf("| Materials Cost: %22c %6.2lf |\n", 156, materialsCost);
 }
 
 /* Displays the number of hours the job is estimated to take */
@@ -444,6 +472,12 @@ void displayMinimumLabourCost(void)
 {
   double min = LABOUR_MIN;
   printf("| Minimum Labour Cost: %17c %6.2lf |\n", 156, min / 100);
+}
+
+/* Displays the cost of the labour used */
+void displayLabourCost(double labourCost)
+{
+  printf("| Labour Cost: %25c %6.2lf |\n", 156, labourCost / 100);
 }
 
 /* Dipslays the sum of all costs before VAT is added */
