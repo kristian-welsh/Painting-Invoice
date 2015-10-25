@@ -5,7 +5,14 @@
   date
 */
 
+/* found the ascii code for £ here: http://forums.devshed.com/programming-42/printf-symbol-510114.html */
 #include <stdio.h>
+#define UNDERCOAT_PRICE 50
+#define LUXURY_PRICE 195
+#define STANDARD_PRICE 120
+#define ECONOMY_PRICE 65
+#define LABOUR_RATE 1500
+#define LABOUR_MIN 12000
 
 void askName(char *namePtr);
 int askWidth(void);
@@ -16,16 +23,35 @@ int askUndercoatNeeded(void);
 int askLabour(void);
 
 void calculateInvoice(int, int, int, char, int, int);
+int calculateArea(int, int, int);
+int calculateMaterialCost(int, char, char);
+int calculateUndercoatCost(int, char);
+int calculatePaintCost(int, char);
+int calculateLabourCost(int);
+double calculateVAT(int);
+int paintPrice(char);
 
+void displayInvoice(char *, int, int, char, int, char, int);
+void displayTableEdge(void);
+void displayTableLine(void);
 void displayClientName(char *namePtr);
-void displayWidth(int);
-void displayHeight(int);
-void displayLength(int);
-void displayPaintType(char);
+void displayArea(int);
+void displayMaterialsCost(double);
+void displayPaintTypeAndPrice(char, int);
+void displayUndercoat(char);
+void displayLabourHours(int);
+
+void displayErrorMessage(void);
 
 int main(void) {
-  char name[32], paintType, undercoatNeeded, foo;
+  /* Input variables */
+  char name[32], paintType, undercoatNeeded;
   int width, height, length, labourHours;
+  
+  /* Calculation variables */
+  int area, materials;
+
+  char programHalter;
   
   askName(name);
   width = askWidth();
@@ -35,17 +61,13 @@ int main(void) {
   undercoatNeeded = askUndercoatNeeded();
   labourHours = askLabour();
 
-  displayClientName(name);
-  displayWidth(width);
-  displayHeight(height);
-  displayLength(length);
-  displayPaintType(paintType);
-  printf("Undercoat Needed: %c\n", undercoatNeeded);
-  printf("Labour Hours Needed: %d\n", labourHours);
+  calculateInvoice(width, height, length, paintType, undercoatNeeded, labourHours);
+  /* name, materials cost, area*/
+  displayInvoice(name, 1, 1, paintType, paintPrice(paintType), undercoatNeeded, labourHours);
 
   /* Halt program for user to see output - Later i plan to replace this with a simpler method */
   printf("Press ENTER to exit...");
-  scanf("%c", &foo);
+  scanf("%c", &programHalter);
   return 0;
 }
 
@@ -114,33 +136,148 @@ int askLabour(void)
   return labourHours;
 }
 
-
-void calculateInvoice(int width, int height, int length, char paintType, int undercoatNeeded, int labour)
+void calculateInvoice(int width, int height, int length, char paintType, int undercoatNeeded, int labourHours)
 {
+  int preVAT, grandTotal, area, paintCharge, labourCost, valueAddedTax;
   
+  area = calculateArea(width, height, length);
+  paintCharge = calculateMaterialCost(area, paintType, undercoatNeeded);
+  labourCost = calculateLabourCost(labourHours);
+
+  preVAT = paintCharge + labourCost;
+  
+  valueAddedTax = calculateVAT(preVAT);
+  grandTotal = preVAT + valueAddedTax;
+
+  printf("Area: %d\n", area);
+  printf("Paint Charge: %d\n", paintCharge);
+  printf("Labour Cost: %d\n", labourCost);
+  printf("Value Added Tax: %d\n", valueAddedTax);
+  printf("Grand Total: %d\n", grandTotal);
+}
+
+int calculateArea(int width, int height, int length)
+{
+  int wall1 = width * height;
+  int wall2 = length * height;
+  int ceiling = width * length;
+  return 2 * wall1 + 2 * wall2 + ceiling;
+}
+
+int calculateMaterialCost(int area, char paintType, char undercoatNeeded)
+{
+  int undercoatCost = calculateUndercoatCost(area, undercoatNeeded);
+  int paintCost = calculatePaintCost(area, paintType);
+  printf("Undercoat Cost: %d\n", undercoatCost);
+  printf("paint Cost: %d\n", paintCost);
+  return paintCost + undercoatCost;
+}
+
+int calculateUndercoatCost(int area, char undercoatNeeded)
+{
+  switch(undercoatNeeded)
+  {
+    case 'Y':
+      return area * UNDERCOAT_PRICE;
+    case 'N':
+      return 0;
+    default:
+      displayErrorMessage();
+      return 0;
+  }
+  displayErrorMessage();
+  return 0;
+}
+
+int calculatePaintCost(int area, char paintType)
+{
+  return paintPrice(paintType) * area;
+}
+
+int paintPrice(char paintType)
+{
+  switch(paintType) {
+    case 'L':
+      return LUXURY_PRICE;
+    case 'S':
+      return STANDARD_PRICE;
+    case 'E':
+      return ECONOMY_PRICE;
+  }
+  displayErrorMessage();
+  return 0;
+}
+
+int calculateLabourCost(int labourHours)
+{
+  int cost = labourHours * LABOUR_RATE;
+  if(cost < LABOUR_MIN)
+  {
+    cost = LABOUR_MIN;
+  }
+  return cost;
+}
+
+double calculateVAT(int total)
+{
+  return total * 0.2;
+}
+
+void displayErrorMessage(void)
+{
+  puts("something has gone horribly wrong!");
+}
+
+void displayInvoice(char *name, int cost, int area, char paintType, int paintPrice, char undercoatNeeded, int labourHours)
+{
+  displayTableEdge();
+  displayClientName(name);
+  displayTableLine();
+  displayMaterialsCost(cost);
+  displayTableLine();
+  displayArea(area);
+  displayPaintTypeAndPrice(paintType, paintPrice);
+  displayUndercoat(undercoatNeeded);
+  displayLabourHours(labourHours);
+  displayTableEdge();
+}
+
+void displayTableEdge(void)
+{
+  printf("=================================================\n");
+}
+
+void displayTableLine(void)
+{
+  printf("+-----------------------------------------------+\n");
 }
 
 void displayClientName(char *namePtr)
 {
-  printf("Client Name: %s\n", namePtr);
+  printf("| Client Name: %32s |\n", namePtr);
 }
 
-void displayWidth(int width)
+void displayMaterialsCost(double cost)
 {
-  printf("Room width: %d\n", width);
+  printf("| Materials Cost: %23c %5d |\n", 156, cost);
 }
 
-void displayHeight(int height)
+void displayArea(int area)
 {
-  printf("Room height: %d\n", height);
+  printf("| Area to Paint: %16d meters square |\n", area);
 }
 
-void displayLength(int length)
+void displayPaintTypeAndPrice(char paintType, int paintPrice)
 {
-  printf("Room length: %d\n", length);
+  printf("| Price of Paint Type %c: %28c %4d |\n", paintType, '£', paintPrice);
 }
 
-void displayPaintType(char paintType)
+void displayUndercoat(char undercoatNeeded)
 {
-  printf("Paint Type: %c\n", paintType);
+  printf("| Undercoat Needed: %27c |\n", undercoatNeeded);
+}
+
+void displayLabourHours(int labourHours)
+{
+  printf("| Labour Hours Needed: %24d |\n", labourHours);
 }
