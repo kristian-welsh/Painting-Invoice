@@ -31,15 +31,19 @@ int calculateLabourCost(int);
 double calculateVAT(int);
 int paintPrice(char);
 
-void displayInvoice(char *, int, int, char, int, char, int);
+void displayInvoice(char *, int, int, char, int, char, int, int, int, int);
 void displayTableEdge(void);
 void displayTableLine(void);
 void displayClientName(char *namePtr);
 void displayArea(int);
-void displayMaterialsCost(double);
+void displayMaterialsCost(int);
 void displayPaintTypeAndPrice(char, int);
-void displayUndercoat(char);
+void displayUndercoatPrice(char);
+void displayPaintCost(int);
+void displayUndercoatCost(int);
+void displayLabourCost(int);
 void displayLabourHours(int);
+void displayLabourRate(void);
 
 void displayErrorMessage(void);
 
@@ -49,7 +53,7 @@ int main(void) {
   int width, height, length, labourHours;
   
   /* Calculation variables */
-  int area, materials;
+  int area, materialsCost, paintCost, undercoatCost, labourCost;
 
   char programHalter;
   
@@ -62,8 +66,14 @@ int main(void) {
   labourHours = askLabour();
 
   calculateInvoice(width, height, length, paintType, undercoatNeeded, labourHours);
+  area = 69;
+  materialsCost = 69;
+  paintCost = 69;
+  undercoatCost = 69;
+  labourCost = 69;
+
   /* name, materials cost, area*/
-  displayInvoice(name, 1, 1, paintType, paintPrice(paintType), undercoatNeeded, labourHours);
+  displayInvoice(name, area, materialsCost, paintType, paintPrice(paintType), undercoatNeeded, paintCost, undercoatCost, labourCost, labourHours);
 
   /* Halt program for user to see output - Later i plan to replace this with a simpler method */
   printf("Press ENTER to exit...");
@@ -228,17 +238,27 @@ void displayErrorMessage(void)
   puts("something has gone horribly wrong!");
 }
 
-void displayInvoice(char *name, int cost, int area, char paintType, int paintPrice, char undercoatNeeded, int labourHours)
+void displayInvoice(char *name, int materialsCost, int area, char paintType, int paintPrice, char undercoatNeeded, int paintCost, int undercoatCost, int labourCost, int labourHours)
 {
   displayTableEdge();
   displayClientName(name);
+
   displayTableLine();
-  displayMaterialsCost(cost);
+  displayMaterialsCost(materialsCost);
   displayTableLine();
+
   displayArea(area);
   displayPaintTypeAndPrice(paintType, paintPrice);
-  displayUndercoat(undercoatNeeded);
+  displayUndercoatPrice(undercoatNeeded);
+  displayPaintCost(paintCost);
+  displayUndercoatCost(undercoatCost);
+
+  displayTableLine();
+  displayLabourCost(labourCost);
+  displayTableLine();
+
   displayLabourHours(labourHours);
+  displayLabourRate();
   displayTableEdge();
 }
 
@@ -257,27 +277,58 @@ void displayClientName(char *namePtr)
   printf("| Client Name: %32s |\n", namePtr);
 }
 
-void displayMaterialsCost(double cost)
+void displayMaterialsCost(int materialsCost)
 {
-  printf("| Materials Cost: %23c %5d |\n", 156, cost);
+  printf("| Materials Cost: %23c %5d |\n", 156, materialsCost);
 }
 
 void displayArea(int area)
 {
-  printf("| Area to Paint: %16d meters square |\n", area);
+  printf("| Area to Paint: %16d square meters |\n", area);
 }
 
 void displayPaintTypeAndPrice(char paintType, int paintPrice)
 {
-  printf("| Price of Paint Type %c: %28c %4d |\n", paintType, '£', paintPrice);
+  /* i insert the £ with a code for two reasons:
+   * 1: using the £ in a string gives you a different character in the printout
+   * 2: i want to be able to set a certain spacing ammount for it withous having a bunch of spaces in the code.
+   */
+  printf("| Price of Paint Type %c: %16c %5d |\n", paintType, 156, paintPrice);
 }
 
-void displayUndercoat(char undercoatNeeded)
+void displayUndercoatPrice(char undercoatNeeded)
 {
-  printf("| Undercoat Needed: %27c |\n", undercoatNeeded);
+  if(undercoatNeeded == 'Y')
+  {
+    printf("| Price of Undercoat: %19c %5d |\n", 156, UNDERCOAT_PRICE);
+  }
+  else
+  {
+    printf("| Price of Undercoat: %19c %5d |\n", 156, 0);
+  }
+}
+
+void displayPaintCost(int paintCost)
+{
+  printf("| Cost of Main Paint: %19c %5d |\n", 156, paintCost);
+}
+
+void displayUndercoatCost(int undercoatCost)
+{
+  printf("| Cost of Undercoat: %20c %5d |\n", 156, undercoatCost);
+}
+
+void displayLabourCost(int labourCost)
+{
+  printf("| Labour Cost: %26c %5d |\n", 156, labourCost);
 }
 
 void displayLabourHours(int labourHours)
 {
   printf("| Labour Hours Needed: %24d |\n", labourHours);
+}
+
+void displayLabourRate(void)
+{
+  printf("| Labour Rate: %26c %5d |\n", 156, LABOUR_RATE);
 }
