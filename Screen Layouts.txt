@@ -44,12 +44,12 @@ Screen 2:
 +--------------------------------------------+
 | Labour Cost:                      £ xxx.xx |
 +--------------------------------------------+
-| Labour Time Required:               1 hour |
+| Labour Hours Needed:                     1 |
 | Labour Rate:                      £ xxx.xx |
 | Minimum Labour Charge:            £ xxx.xx |
 +--------------------------------------------+
 | Pre-VAT Total:                    £ xxx.xx |
-| %20 VAT:                           £ xx.xx |
+| 20% VAT:                          £ xxx.xx |
 +--------------------------------------------+
 | Grand Total:                      £ xxx.xx |
 ==============================================

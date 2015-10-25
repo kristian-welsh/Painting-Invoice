@@ -31,20 +31,29 @@ int calculateLabourCost(int);
 double calculateVAT(int);
 int paintPrice(char);
 
-void displayInvoice(char *, int, int, char, int, char, int, int, int, int);
+void displayInvoice(char *, int, int, char, int, char, int, int, int, int, int, double, double);
+
 void displayTableEdge(void);
 void displayTableLine(void);
+
 void displayClientName(char *namePtr);
+
 void displayArea(int);
 void displayMaterialsCost(int);
 void displayPaintTypeAndPrice(char, int);
 void displayUndercoatPrice(char);
 void displayPaintCost(int);
 void displayUndercoatCost(int);
-void displayLabourCost(int);
+
+void displayLabourCost(double);
 void displayLabourHours(int);
 void displayLabourRate(void);
 void displayMinimumLabourCost(void);
+
+void displayPreVATTotal(int);
+void displayVATCost(double);
+
+void displayGrandTotal(double);
 
 void displayErrorMessage(void);
 
@@ -54,7 +63,8 @@ int main(void) {
   int width, height, length, labourHours;
   
   /* Calculation variables */
-  int area, materialsCost, paintCost, undercoatCost, labourCost;
+  int area, materialsCost, paintCost, undercoatCost, labourCost, preVATTotal;
+  double VATCost, grandTotal;
 
   char programHalter;
   
@@ -72,9 +82,12 @@ int main(void) {
   paintCost = 69;
   undercoatCost = 69;
   labourCost = 69;
+  preVATTotal = 69;
+  VATCost = 69;
+  grandTotal = 69;
 
   /* name, materials cost, area*/
-  displayInvoice(name, area, materialsCost, paintType, paintPrice(paintType), undercoatNeeded, paintCost, undercoatCost, labourCost, labourHours);
+  displayInvoice(name, area, materialsCost, paintType, paintPrice(paintType), undercoatNeeded, paintCost, undercoatCost, labourCost, labourHours, preVATTotal, VATCost, grandTotal);
 
   /* Halt program for user to see output - Later i plan to replace this with a simpler method */
   printf("Press ENTER to exit...");
@@ -239,9 +252,10 @@ void displayErrorMessage(void)
   puts("something has gone horribly wrong!");
 }
 
-void displayInvoice(char *name, int materialsCost, int area, char paintType, int paintPrice, char undercoatNeeded, int paintCost, int undercoatCost, int labourCost, int labourHours)
+void displayInvoice(char *name, int materialsCost, int area, char paintType, int paintPrice, char undercoatNeeded, int paintCost, int undercoatCost, int labourCost, int labourHours, int preVATTotal, double VATCost, double grandTotal)
 {
   displayTableEdge();
+
   displayClientName(name);
 
   displayTableLine();
@@ -261,6 +275,14 @@ void displayInvoice(char *name, int materialsCost, int area, char paintType, int
   displayLabourHours(labourHours);
   displayLabourRate();
   displayMinimumLabourCost();
+
+  displayTableLine();
+  displayPreVATTotal(preVATTotal);
+  displayVATCost(VATCost);
+  displayTableLine();
+
+  displayGrandTotal(grandTotal);
+
   displayTableEdge();
 }
 
@@ -320,9 +342,9 @@ void displayUndercoatCost(int undercoatCost)
   printf("| Cost of Undercoat: %20c %5d |\n", 156, undercoatCost);
 }
 
-void displayLabourCost(int labourCost)
+void displayLabourCost(double labourCost)
 {
-  printf("| Labour Cost: %26c %5d |\n", 156, labourCost);
+  printf("| Labour Cost: %26c %5.2lf |\n", 156, labourCost);
 }
 
 void displayLabourHours(int labourHours)
@@ -338,4 +360,19 @@ void displayLabourRate(void)
 void displayMinimumLabourCost(void)
 {
   printf("| Minimum Labour Cost: %18c %5d |\n", 156, LABOUR_MIN);
+}
+
+void displayPreVATTotal(int preVATTotal)
+{
+  printf("| Pre-VAT Total: %24c %5d |\n", 156, preVATTotal);
+}
+
+void displayVATCost(double VATCost)
+{
+  printf("| 20% VAT: %32c %5.2lf |\n", 156, VATCost);
+}
+
+void displayGrandTotal(double grandTotal)
+{
+  printf("| Grand Total: %26c %5.2lf |\n", 156, grandTotal);
 }
