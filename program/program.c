@@ -16,6 +16,10 @@
 #define LABOUR_RATE 1500
 #define LABOUR_MIN 12000
 
+/* Prototype declarations.
+ * Fun fact: there are more than 30 of these
+ * yes, i do enjoy typing :)
+ */
 void askName(char *namePtr);
 int askWidth(void);
 int askHeight(void);
@@ -41,21 +45,21 @@ void displayInvoice(char *, int, int, char, int, char,
 void displayTableEdge(void);
 void displayTableLine(void);
 
-void displayClientName(char *namePtr);
+void displayClientName(char *);
 
 void displayArea(int);
-void displayMaterialsCost(int);
-void displayPaintTypeAndPrice(char, int);
+void displayMaterialsCost(double);
+void displayPaintTypeAndPrice(char, double);
 void displayUndercoatPrice(char);
-void displayPaintCost(int);
-void displayUndercoatCost(int);
+void displayPaintCost(double);
+void displayUndercoatCost(double);
 
 void displayLabourCost(double);
 void displayLabourHours(int);
 void displayLabourRate(void);
 void displayMinimumLabourCost(void);
 
-void displayPreVATTotal(int);
+void displayPreVATTotal(double);
 void displayVATCost(double);
 
 void displayGrandTotal(double);
@@ -72,7 +76,9 @@ int main(void) {
   int area, materialsCost, paintCost, undercoatCost, labourCost, preVATTotal;
   double VATCost, grandTotal;
 
+  /* I use this to stop the program so the data is shown */
   char programHalter;
+
   askName(name);
   width = askWidth();
   height = askHeight();
@@ -80,6 +86,8 @@ int main(void) {
   paintType = askPaintType();
   undercoatNeeded = askUndercoatNeeded();
   labourHours = askLabour();
+
+  system("cls");
 
   calculateInvoice(width, height, length, paintType,
     undercoatNeeded, labourHours, &area, &paintCost,
@@ -244,11 +252,18 @@ int calculateUndercoatCost(int area, char undercoatNeeded)
   return 0;
 }
 
+/* Calculates the cost of paint type requested
+ * Accepts an area, and a character representing the
+ * type of paint required.
+ */
 int calculatePaintCost(int area, char paintType)
 {
   return findPaintPrice(paintType) * area;
 }
 
+/* Finds the price of the paintType provided
+ * Accepts a character representing the type of paint required.
+ */
 int findPaintPrice(char paintType)
 {
   switch(paintType) {
@@ -263,6 +278,11 @@ int findPaintPrice(char paintType)
   return 0;
 }
 
+/* Calculates the cost of the labour required
+ * Accepts the number of hours of labour needed
+ * returns the rate * the hours or the minimum,
+ * Whichever is higher
+ */
 int calculateLabourCost(int labourHours)
 {
   int cost = labourHours * LABOUR_RATE;
@@ -273,16 +293,27 @@ int calculateLabourCost(int labourHours)
   return cost;
 }
 
+/* Calculates how much VAT is due to be paid */
 double calculateVAT(int total)
 {
   return total * 0.2;
 }
 
+/* Displays an error message.
+ * Hopefully the user never sees this.
+ */
 void displayErrorMessage(void)
 {
   puts("something has gone horribly wrong!");
 }
 
+/* Displays the invoice
+ * Accepts a whole host of variables that encompases
+ * almost all the information gathered thus far.
+ * Arguments that represent currency are accepted as integers in
+ * pennies, and cast to doubles when passed to the indevidual
+ * display functions for proper formatting to the user.
+ */
 void displayInvoice(char *name, int materialsCost, int area,
   char paintType, int paintPrice, char undercoatNeeded,
   int paintCost, int undercoatCost, int labourCost, int labourHours, 
@@ -320,95 +351,114 @@ void displayInvoice(char *name, int materialsCost, int area,
   displayTableEdge();
 }
 
+/* Displays a table edge */
 void displayTableEdge(void)
 {
   printf("=================================================\n");
 }
 
+/* Displays a table divide */
 void displayTableLine(void)
 {
   printf("+-----------------------------------------------+\n");
 }
 
+/* Displays the client name */
 void displayClientName(char *namePtr)
 {
   printf("| Client Name: %32s |\n", namePtr);
 }
 
-void displayMaterialsCost(int materialsCost)
+/* Display the materials cost */
+void displayMaterialsCost(double materialsCost)
 {
   /* i insert the £ with a code for two reasons:
-   * 1: using the £ in a string gives you a different
+   * 1: using the £ in a string gives you a "á"
    *    character in the printout
    * 2: i want to be able to set a certain spacing
    *    ammount for it without having a bunch of spaces in the code.
    */
-  printf("| Materials Cost: %23c %5d |\n", 156, materialsCost);
+  printf("| Materials Cost: %22c %6.2lf |\n", 156, materialsCost);
 }
 
+/* Displays the area to be painted */
 void displayArea(int area)
 {
   printf("| Area to Paint: %16d square meters |\n", area);
 }
 
-void displayPaintTypeAndPrice(char paintType, int paintPrice)
+/* Displays the paint type and the price of that paint type */
+void displayPaintTypeAndPrice(char paintType, double paintPrice)
 {
-  printf("| Price of Paint Type %c: %16c %5d |\n", paintType, 156, paintPrice);
+  printf("| Price of Paint Type %c: %15c %6.2lf |\n",
+    paintType, 156, paintPrice / 100);
 }
 
+/* Displays whether an undercoat was requested, and it's price */
 void displayUndercoatPrice(char undercoatNeeded)
 {
+  double price = UNDERCOAT_PRICE;
   if(undercoatNeeded == 'Y')
   {
-    printf("| Price of Undercoat: %19c %5d |\n", 156, UNDERCOAT_PRICE);
+    printf("| Price of Undercoat: %19c %6.2lf |\n", 156, price / 100);
   }
   else
   {
-    printf("| Price of Undercoat: %19c %5d |\n", 156, 0);
+    printf("| Price of Undercoat: %18c %6.2lf |\n", 156, 0);
   }
 }
 
-void displayPaintCost(int paintCost)
+/* Displays the cost of all paint to be used */
+void displayPaintCost(double paintCost)
 {
-  printf("| Cost of Main Paint: %19c %5d |\n", 156, paintCost);
+  printf("| Cost of Main Paint: %18c %6.2lf |\n", 156, paintCost / 100);
 }
 
-void displayUndercoatCost(int undercoatCost)
+/* Displays the cost of all the undercoat paint used */
+void displayUndercoatCost(double undercoatCost)
 {
-  printf("| Cost of Undercoat: %20c %5d |\n", 156, undercoatCost);
+  printf("| Cost of Undercoat: %19c %6.2lf |\n", 156, undercoatCost / 100);
 }
 
+/* Displays the cost of the labour used */
 void displayLabourCost(double labourCost)
 {
-  printf("| Labour Cost: %26c %5.2lf |\n", 156, labourCost);
+  printf("| Labour Cost: %25c %6.2lf |\n", 156, labourCost / 100);
 }
 
+/* Displays the number of hours the job is estimated to take */
 void displayLabourHours(int labourHours)
 {
   printf("| Labour Hours Needed: %24d |\n", labourHours);
 }
 
+/* Displays the pay rate of the labourer */
 void displayLabourRate(void)
 {
-  printf("| Labour Rate: %26c %5d |\n", 156, LABOUR_RATE);
+  double rate = LABOUR_RATE;
+  printf("| Labour Rate: %25c %6.2lf |\n", 156, rate / 100);
 }
 
+/* Displays the minimum the labourer will accept for a job */
 void displayMinimumLabourCost(void)
 {
-  printf("| Minimum Labour Cost: %18c %5d |\n", 156, LABOUR_MIN);
+  double min = LABOUR_MIN;
+  printf("| Minimum Labour Cost: %17c %6.2lf |\n", 156, min / 100);
 }
 
-void displayPreVATTotal(int preVATTotal)
+/* Dipslays the sum of all costs before VAT is added */
+void displayPreVATTotal(double preVATTotal)
 {
-  printf("| Pre-VAT Total: %24c %5d |\n", 156, preVATTotal);
+  printf("| Pre-VAT Total: %23c %6.2lf |\n", 156, preVATTotal / 100);
 }
 
+/* Displays the ammmount of VAT to be added */
 void displayVATCost(double VATCost)
 {
-  printf("| 20%% VAT: %32c %5.2lf |\n", 156, VATCost);
+  printf("| 20%% VAT: %29c %6.2lf |\n", 156, VATCost / 100);
 }
-
+/* Displays the final total with the VAT included */
 void displayGrandTotal(double grandTotal)
 {
-  printf("| Grand Total: %26c %5.2lf |\n", 156, grandTotal);
+  printf("| Grand Total: %25c %6.2lf |\n", 156, grandTotal/100);
 }
