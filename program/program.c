@@ -5,7 +5,9 @@
   date
 */
 
-/* found the ascii code for £ here: http://forums.devshed.com/programming-42/printf-symbol-510114.html */
+/* found the ascii code for £ here:
+ * http://forums.devshed.com/programming-42/printf-symbol-510114.html
+ */
 #include <stdio.h>
 #define UNDERCOAT_PRICE 50
 #define LUXURY_PRICE 195
@@ -22,16 +24,19 @@ char askPaintType(void);
 int askUndercoatNeeded(void);
 int askLabour(void);
 
-void calculateInvoice(int, int, int, char, int, int);
+void calculateInvoice(int, int, int, char, int, int,
+  int *, int *, int *, int *, int *, int *, double *, double *);
+
 int calculateArea(int, int, int);
 int calculateMaterialCost(int, char, char);
 int calculateUndercoatCost(int, char);
 int calculatePaintCost(int, char);
+int findPaintPrice(char);
 int calculateLabourCost(int);
 double calculateVAT(int);
-int paintPrice(char);
 
-void displayInvoice(char *, int, int, char, int, char, int, int, int, int, int, double, double);
+void displayInvoice(char *, int, int, char, int, char,
+  int, int, int, int, int, double, double);
 
 void displayTableEdge(void);
 void displayTableLine(void);
@@ -57,6 +62,7 @@ void displayGrandTotal(double);
 
 void displayErrorMessage(void);
 
+/* Gets user input, calculates an invoice, then displays it. */
 int main(void) {
   /* Input variables */
   char name[32], paintType, undercoatNeeded;
@@ -67,7 +73,6 @@ int main(void) {
   double VATCost, grandTotal;
 
   char programHalter;
-  
   askName(name);
   width = askWidth();
   height = askHeight();
@@ -76,18 +81,15 @@ int main(void) {
   undercoatNeeded = askUndercoatNeeded();
   labourHours = askLabour();
 
-  calculateInvoice(width, height, length, paintType, undercoatNeeded, labourHours);
-  area = 69;
-  materialsCost = 69;
-  paintCost = 69;
-  undercoatCost = 69;
-  labourCost = 69;
-  preVATTotal = 69;
-  VATCost = 69;
-  grandTotal = 69;
+  calculateInvoice(width, height, length, paintType,
+    undercoatNeeded, labourHours, &area, &paintCost,
+    &undercoatCost, &materialsCost, &labourCost,
+    &preVATTotal, &VATCost, &grandTotal);
 
-  /* name, materials cost, area*/
-  displayInvoice(name, area, materialsCost, paintType, paintPrice(paintType), undercoatNeeded, paintCost, undercoatCost, labourCost, labourHours, preVATTotal, VATCost, grandTotal);
+  displayInvoice(name, materialsCost, area, paintType,
+    findPaintPrice(paintType), undercoatNeeded, paintCost,
+    undercoatCost, labourCost, labourHours, preVATTotal,
+    VATCost, grandTotal);
 
   /* Halt program for user to see output - Later i plan to replace this with a simpler method */
   printf("Press ENTER to exit...");
@@ -95,10 +97,9 @@ int main(void) {
   return 0;
 }
 
-/*
-  Asks the user for the client's name
-  Accepts a pointer to a char array as an argument.
-*/
+/* Asks the user for the client's name
+ * Accepts a pointer to a char array as an argument.
+ */
 void askName(char *namePtr)
 {
   printf("Please enter client name: ");
@@ -106,6 +107,9 @@ void askName(char *namePtr)
   fflush(stdin);
 }
 
+/* Asks the user for the width of the room to paint.
+ * Returns the entered integer.
+ */
 int askWidth(void)
 {
   int width;
@@ -115,6 +119,9 @@ int askWidth(void)
   return width;
 }
 
+/* Asks the user for the height of the room to paint.
+ * Returns the entered integer.
+ */
 int askHeight(void)
 {
   int height;
@@ -124,6 +131,9 @@ int askHeight(void)
   return height;
 }
 
+/* Asks the user for the length of the room to paint.
+ * Returns the entered integer.
+ */
 int askLength(void)
 {
   int length;
@@ -133,6 +143,9 @@ int askLength(void)
   return length;
 }
 
+/* Asks the user for the type of paint to use in the calculation.
+ * Returns the entered character.
+ */
 char askPaintType(void)
 {
   char paintType;
@@ -142,6 +155,9 @@ char askPaintType(void)
   return paintType;
 }
 
+/* Asks the user whether an undercoat is needed for the room.
+ * Returns the entered character.
+ */
 int askUndercoatNeeded(void)
 {
   char undercoatNeeded;
@@ -151,6 +167,9 @@ int askUndercoatNeeded(void)
   return undercoatNeeded;
 }
 
+/* Asks the user how many hours of labour is required.
+ * Returns the entered integer.
+ */
 int askLabour(void)
 {
   int labourHours;
@@ -160,26 +179,34 @@ int askLabour(void)
   return labourHours;
 }
 
-void calculateInvoice(int width, int height, int length, char paintType, int undercoatNeeded, int labourHours)
+/* Calculates all invoice information using the user's inputs
+ * Accepts all of the user's inputs as arguments.
+ * Also accepts pointers to output variables as arguments.
+ * Returns each piece of calculated information by
+ * changing the values pointed at by pointer arguments.
+ */
+void calculateInvoice(int width, int height, int length,
+  char paintType, int undercoatNeeded, int labourHours,
+  int *area, int *paintCost, int *undercoatCost,
+  int *materialsCost, int *labourCost, int *preVATTotal,
+  double *VATCost, double *grandTotal)
 {
-  int preVAT, grandTotal, area, paintCharge, labourCost, valueAddedTax;
-  
-  area = calculateArea(width, height, length);
-  paintCharge = calculateMaterialCost(area, paintType, undercoatNeeded);
-  labourCost = calculateLabourCost(labourHours);
+  *area = calculateArea(width, height, length);
+  *paintCost = calculatePaintCost(*area, paintType);
+  *undercoatCost = calculateUndercoatCost(*area, undercoatNeeded);
+  *materialsCost = *undercoatCost + *paintCost;
 
-  preVAT = paintCharge + labourCost;
-  
-  valueAddedTax = calculateVAT(preVAT);
-  grandTotal = preVAT + valueAddedTax;
+  *labourCost = calculateLabourCost(labourHours);
 
-  printf("Area: %d\n", area);
-  printf("Paint Charge: %d\n", paintCharge);
-  printf("Labour Cost: %d\n", labourCost);
-  printf("Value Added Tax: %d\n", valueAddedTax);
-  printf("Grand Total: %d\n", grandTotal);
+  *preVATTotal = *paintCost + *labourCost;
+  
+  *VATCost = calculateVAT(*preVATTotal);
+  *grandTotal = *preVATTotal + *VATCost;
 }
 
+/* Calculates the area that needs to be painted
+ * Accepts the width, height, and length of the room as arguments.
+ */
 int calculateArea(int width, int height, int length)
 {
   int wall1 = width * height;
@@ -188,15 +215,22 @@ int calculateArea(int width, int height, int length)
   return 2 * wall1 + 2 * wall2 + ceiling;
 }
 
+/* Calculates the cost of all the materials
+ * needed to paint the room.
+ * Accepts the room's area, the type of paint
+ * needed, and whether an undercoat is needed as arguemnts
+ */
 int calculateMaterialCost(int area, char paintType, char undercoatNeeded)
 {
   int undercoatCost = calculateUndercoatCost(area, undercoatNeeded);
   int paintCost = calculatePaintCost(area, paintType);
-  printf("Undercoat Cost: %d\n", undercoatCost);
-  printf("paint Cost: %d\n", paintCost);
   return paintCost + undercoatCost;
 }
 
+/* Calculates the cost of any undercoat requested
+ * Accepts an area, and a character representing whether
+ * an undercoat is needed or not.
+ */
 int calculateUndercoatCost(int area, char undercoatNeeded)
 {
   switch(undercoatNeeded)
@@ -205,9 +239,6 @@ int calculateUndercoatCost(int area, char undercoatNeeded)
       return area * UNDERCOAT_PRICE;
     case 'N':
       return 0;
-    default:
-      displayErrorMessage();
-      return 0;
   }
   displayErrorMessage();
   return 0;
@@ -215,10 +246,10 @@ int calculateUndercoatCost(int area, char undercoatNeeded)
 
 int calculatePaintCost(int area, char paintType)
 {
-  return paintPrice(paintType) * area;
+  return findPaintPrice(paintType) * area;
 }
 
-int paintPrice(char paintType)
+int findPaintPrice(char paintType)
 {
   switch(paintType) {
     case 'L':
@@ -252,7 +283,10 @@ void displayErrorMessage(void)
   puts("something has gone horribly wrong!");
 }
 
-void displayInvoice(char *name, int materialsCost, int area, char paintType, int paintPrice, char undercoatNeeded, int paintCost, int undercoatCost, int labourCost, int labourHours, int preVATTotal, double VATCost, double grandTotal)
+void displayInvoice(char *name, int materialsCost, int area,
+  char paintType, int paintPrice, char undercoatNeeded,
+  int paintCost, int undercoatCost, int labourCost, int labourHours, 
+  int preVATTotal, double VATCost, double grandTotal)
 {
   displayTableEdge();
 
@@ -303,6 +337,12 @@ void displayClientName(char *namePtr)
 
 void displayMaterialsCost(int materialsCost)
 {
+  /* i insert the £ with a code for two reasons:
+   * 1: using the £ in a string gives you a different
+   *    character in the printout
+   * 2: i want to be able to set a certain spacing
+   *    ammount for it without having a bunch of spaces in the code.
+   */
   printf("| Materials Cost: %23c %5d |\n", 156, materialsCost);
 }
 
@@ -313,10 +353,6 @@ void displayArea(int area)
 
 void displayPaintTypeAndPrice(char paintType, int paintPrice)
 {
-  /* i insert the £ with a code for two reasons:
-   * 1: using the £ in a string gives you a different character in the printout
-   * 2: i want to be able to set a certain spacing ammount for it withous having a bunch of spaces in the code.
-   */
   printf("| Price of Paint Type %c: %16c %5d |\n", paintType, 156, paintPrice);
 }
 
@@ -369,7 +405,7 @@ void displayPreVATTotal(int preVATTotal)
 
 void displayVATCost(double VATCost)
 {
-  printf("| 20% VAT: %32c %5.2lf |\n", 156, VATCost);
+  printf("| 20%% VAT: %32c %5.2lf |\n", 156, VATCost);
 }
 
 void displayGrandTotal(double grandTotal)
