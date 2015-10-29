@@ -20,40 +20,40 @@
  * yes, i do enjoy typing :)
  */
 void askName(char *namePtr);
-int askHeight(void);
-int askWidth(void);
-int askLength(void);
+double askHeight(void);
+double askWidth(void);
+double askLength(void);
 char askPaintType(void);
 char askUndercoatNeeded(void);
-int askLabour(void);
-void tellUserTheirWallsAreTooBigIfTheyAre(int);
-void tellUserTheirWallsAreTooHighIfTheyAre(int);
-int inputWhithinBounds(int, int, int);
+double askLabour(void);
+void tellUserTheirWallsAreTooBigIfTheyAre(double);
+void tellUserTheirWallsAreTooHighIfTheyAre(double);
+int inputWhithinBounds(double, double, double);
 int isValidPaintType(char);
 int isValidUndercoatCharacter(char);
 void tellUserToOnlyUseValidPaintTypesIfTheyHaveNot(char);
 void tellTheUserTheyEnteredAWrongCharacterIfTheyHave(char);
 
-void calculateInvoice(int, int, int, char, int, int,
-	int *, int *, int *, int *, int *, int *, double *, double *);
+void calculateInvoice(double, double, double, char, char, double,
+	double *, double *, double *, double *, double *, double *, double *, double *);
 
-int calculateArea(int, int, int);
-int calculateMaterialCost(int, char, char);
-int calculateUndercoatCost(int, char);
-int calculatePaintCost(int, char);
+double calculateArea(double, double, double);
+double calculateMaterialCost(double, char, char);
+double calculateUndercoatCost(double, char);
+double calculatePaintCost(double, char);
 int findPaintPrice(char);
-int calculateLabourCost(int);
-double calculateVAT(int);
+double calculateLabourCost(double);
+double calculateVAT(double);
 
-void displayInvoice(char *, int, int, char, int, char,
-	int, int, int, int, int, double, double);
+void displayInvoice(char *, double, double, char, double, char,
+	double, double, double, double, double, double, double);
 
 void displayTableEdge(void);
 void displayTableLine(void);
 
 void displayClientName(char *);
 
-void displayArea(int);
+void displayArea(double);
 void displayMaterialsCost(double);
 void displayPaintTypeAndPrice(char, double);
 void displayUndercoatPrice(char);
@@ -61,7 +61,7 @@ void displayPaintCost(double);
 void displayUndercoatCost(double);
 
 void displayLabourCost(double);
-void displayLabourHours(int);
+void displayLabourHours(double);
 void displayLabourRate(void);
 void displayMinimumLabourCost(void);
 
@@ -77,10 +77,10 @@ int main(void)
 {
 	/* Input variables */
 	char name[32], paintType, undercoatNeeded;
-	int height, width, length, labourHours;
+	double height, width, length, labourHours;
 	
 	/* Calculation variables */
-	int area, materialsCost, paintCost, undercoatCost, labourCost, preVATTotal;
+	double area, materialsCost, paintCost, undercoatCost, labourCost, preVATTotal;
 	double VATCost, grandTotal;
 
 	/* I use this to stop the program so the data is shown */
@@ -118,20 +118,20 @@ int main(void)
 void askName(char *namePtr)
 {
 	printf("Please enter client name (max 32 digits): ");
-	gets(namePtr);
+  scanf("%31[^\n]", namePtr);
 	fflush(stdin);
 }
 
 /* Asks the user for the height of the room to paint.
  * Returns the entered integer once valid.
  */
-int askHeight(void)
+double askHeight(void)
 {
-	int height;
+	double height;
 	do
 	{
 		printf("Please enter room height in meters: ");
-		scanf("%d", &height);
+		scanf("%lf", &height);
 		fflush(stdin);
 		tellUserTheirWallsAreTooHighIfTheyAre(height);
 	} while(!inputWhithinBounds(height, 2, 6));
@@ -141,13 +141,13 @@ int askHeight(void)
 /* Asks the user for the width of the room to paint.
  * Returns the entered integer once valid.
  */
-int askWidth(void)
+double askWidth(void)
 {
-	int width;
+	double width;
 	do
 	{
 		printf("Please enter room width in meters: ");
-		scanf("%d", &width);
+		scanf("%lf", &width);
 		fflush(stdin);
 		tellUserTheirWallsAreTooBigIfTheyAre(width);
 	} while(!inputWhithinBounds(width, 1, 25));
@@ -157,13 +157,13 @@ int askWidth(void)
 /* Asks the user for the length of the room to paint.
  * Returns the entered integer once valid.
  */
-int askLength(void)
+double askLength(void)
 {
-	int length;
+	double length;
 	do
 	{
 		printf("Please enter room length in meters: ");
-		scanf("%d", &length);
+		scanf("%lf", &length);
 		fflush(stdin);
 		tellUserTheirWallsAreTooBigIfTheyAre(length);
 	} while(!inputWhithinBounds(length, 1, 25));
@@ -212,18 +212,18 @@ char askUndercoatNeeded(void)
 /* Asks the user how many hours of labour is required.
  * Returns the entered integer.
  */
-int askLabour(void)
+double askLabour(void)
 {
-	int labourHours;
+	double labourHours;
 	printf("\n");
 	printf("Please enter how many hours labour will be needed: ");
-	scanf("%d", &labourHours);
+	scanf("%lf", &labourHours);
 	fflush(stdin);
 	return labourHours;
 }
 
 /* Tells the user if their walls are too tall or short. */
-void tellUserTheirWallsAreTooHighIfTheyAre(int height)
+void tellUserTheirWallsAreTooHighIfTheyAre(double height)
 {
 	if(!inputWhithinBounds(height, 2, 6))
 	{
@@ -232,7 +232,7 @@ void tellUserTheirWallsAreTooHighIfTheyAre(int height)
 }
 
 /* If the wall size is too large, inform the user */
-void tellUserTheirWallsAreTooBigIfTheyAre(int wallSize)
+void tellUserTheirWallsAreTooBigIfTheyAre(double wallSize)
 {
 	if(!inputWhithinBounds(wallSize, 1, 25))
 	{
@@ -261,7 +261,7 @@ void tellTheUserTheyEnteredAWrongCharacterIfTheyHave(char undercoatNeeded)
 /* returns 1 if the unput is between the upper and lower bounds
  * otherwise returns 0.
  */
-int inputWhithinBounds(int input, int min, int max)
+int inputWhithinBounds(double input, double min, double max)
 {
 	int result = ((min <= input) && (input <= max));
 	return result;
@@ -301,11 +301,12 @@ int isValidUndercoatCharacter(char undercoatNeeded)
  * Also accepts pointers to output variables as arguments.
  * Returns each piece of calculated information by
  * changing the values pointed at by pointer arguments.
+void calculateInvoice(double, double, double, char, double, double,
  */
-void calculateInvoice(int width, int height, int length,
-	char paintType, int undercoatNeeded, int labourHours,
-	int *area, int *paintCost, int *undercoatCost,
-	int *materialsCost, int *labourCost, int *preVATTotal,
+void calculateInvoice(double width, double height, double length,
+	char paintType, char undercoatNeeded, double labourHours,
+	double *area, double *paintCost, double *undercoatCost,
+	double *materialsCost, double *labourCost, double *preVATTotal,
 	double *VATCost, double *grandTotal)
 {
 	*area = calculateArea(width, height, length);
@@ -324,11 +325,11 @@ void calculateInvoice(int width, int height, int length,
 /* Calculates the area that needs to be painted
  * Accepts the width, height, and length of the room as arguments.
  */
-int calculateArea(int width, int height, int length)
+double calculateArea(double width, double height, double length)
 {
-	int wall1 = width * height;
-	int wall2 = length * height;
-	int ceiling = width * length;
+	double wall1 = width * height;
+	double wall2 = length * height;
+	double ceiling = width * length;
 	return 2 * wall1 + 2 * wall2 + ceiling;
 }
 
@@ -337,10 +338,10 @@ int calculateArea(int width, int height, int length)
  * Accepts the room's area, the type of paint
  * needed, and whether an undercoat is needed as arguemnts
  */
-int calculateMaterialCost(int area, char paintType, char undercoatNeeded)
+double calculateMaterialCost(double area, char paintType, char undercoatNeeded)
 {
-	int undercoatCost = calculateUndercoatCost(area, undercoatNeeded);
-	int paintCost = calculatePaintCost(area, paintType);
+	double undercoatCost = calculateUndercoatCost(area, undercoatNeeded);
+	double paintCost = calculatePaintCost(area, paintType);
 	return paintCost + undercoatCost;
 }
 
@@ -348,7 +349,7 @@ int calculateMaterialCost(int area, char paintType, char undercoatNeeded)
  * Accepts an area, and a character representing whether
  * an undercoat is needed or not.
  */
-int calculateUndercoatCost(int area, char undercoatNeeded)
+double calculateUndercoatCost(double area, char undercoatNeeded)
 {
 	switch(undercoatNeeded)
 	{
@@ -365,7 +366,7 @@ int calculateUndercoatCost(int area, char undercoatNeeded)
  * Accepts an area, and a character representing the
  * type of paint required.
  */
-int calculatePaintCost(int area, char paintType)
+double calculatePaintCost(double area, char paintType)
 {
 	return findPaintPrice(paintType) * area;
 }
@@ -393,9 +394,9 @@ int findPaintPrice(char paintType)
  * returns the rate * the hours or the minimum,
  * Whichever is higher
  */
-int calculateLabourCost(int labourHours)
+double calculateLabourCost(double labourHours)
 {
-	int cost = labourHours * LABOUR_RATE;
+	double cost = labourHours * LABOUR_RATE;
 	if(cost < LABOUR_MIN)
 	{
 		cost = LABOUR_MIN;
@@ -404,7 +405,7 @@ int calculateLabourCost(int labourHours)
 }
 
 /* Calculates how much VAT is due to be paid */
-double calculateVAT(int total)
+double calculateVAT(double total)
 {
 	return total * 0.2;
 }
@@ -424,10 +425,10 @@ void displayErrorMessage(void)
  * pennies, and cast to doubles when passed to the indevidual
  * display functions for proper formatting to the user.
  */
-void displayInvoice(char *name, int materialsCost, int area,
-	char paintType, int paintPrice, char undercoatNeeded,
-	int paintCost, int undercoatCost, int labourCost, int labourHours, 
-	int preVATTotal, double VATCost, double grandTotal)
+void displayInvoice(char *name, double materialsCost, double area,
+	char paintType, double paintPrice, char undercoatNeeded,
+	double paintCost, double undercoatCost, double labourCost, double labourHours, 
+	double preVATTotal, double VATCost, double grandTotal)
 {
 	displayTableEdge();
 	displayClientName(name);
@@ -478,9 +479,9 @@ void displayClientName(char *namePtr)
 }
 
 /* Displays the area to be painted */
-void displayArea(int area)
+void displayArea(double area)
 {
-	printf("| Area to Paint: %16d square meters |\n", area);
+	printf("| Area to Paint: %16.2lf square meters |\n", area);
 }
 
 /* Displays the paint type and the price of that paint type */
@@ -493,15 +494,16 @@ void displayPaintTypeAndPrice(char paintType, double paintPrice)
 /* Displays whether an undercoat was requested, and it's price */
 void displayUndercoatPrice(char undercoatNeeded)
 {
-	double price = UNDERCOAT_PRICE;
+	double price;
 	if(undercoatNeeded == 'Y')
 	{
-		printf("| Price of Undercoat: %18c %6.2lf |\n", 156, price / 100);
+    price = UNDERCOAT_PRICE;
 	}
 	else
 	{
-		printf("| Price of Undercoat: %18c %6.2lf |\n", 156, 0);
+    price = 0;
 	}
+	printf("| Price of Undercoat: %18c %6.2lf |\n", 156, price / 100);
 }
 
 /* Displays the cost of all paint to be used */
@@ -529,9 +531,9 @@ void displayMaterialsCost(double materialsCost)
 }
 
 /* Displays the number of hours the job is estimated to take */
-void displayLabourHours(int labourHours)
+void displayLabourHours(double labourHours)
 {
-	printf("| Labour Hours Needed: %24d |\n", labourHours);
+	printf("| Labour Hours Needed: %24.2lf |\n", labourHours);
 }
 
 /* Displays the pay rate of the labourer */
